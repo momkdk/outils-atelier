@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "outils-atelier"
+version = "0.1.0"
+description = "Petits outils de calcul open source pour ateliers d'usinage et de décolletage"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Mohamed Ali El Amri" }]
+keywords = ["usinage", "décolletage", "TRS", "OEE", "Cpk", "SPC", "industrie"]
+
+[project.scripts]
+outils-atelier = "outils_atelier.__main__:main"
+
+[tool.setuptools]
+packages = ["outils_atelier"]
