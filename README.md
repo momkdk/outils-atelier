@@ -1,7 +1,9 @@
 # outils-atelier
 
+🔗 **Essayer en ligne, gratuitement : [momkdk.github.io/outils-atelier](https://momkdk.github.io/outils-atelier/)**
+
 Petits outils de calcul open source (licence MIT) pour les ateliers d'usinage et de décolletage.
-Python pur, aucune dépendance, utilisable en ligne de commande ou comme bibliothèque.
+Python pur, aucune dépendance, utilisable en ligne de commande, comme bibliothèque, ou directement dans le navigateur via la page ci-dessus.
 
 Objectif : des calculs simples, vérifiables et testés, que n'importe quel atelier peut lire, adapter et brancher à ses propres fichiers.
 
