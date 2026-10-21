@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Calculs d'atelier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout : une fiche d'atelier — bandeau de titre, trois panneaux de calcul empilés sur mobile, en grille sur grand écran */
+:root{
+  --bg:#F3F6F8; --surface:#FFFFFF; --surface-2:#EAF0F4; --ink:#13233B; --muted:#5A6B82;
+  --line:#D7E0E8; --accent:#D9551E; --accent-ink:#FFFFFF; --blue:#2B5AA3;
+  --ok:#2F8F5F; --warn:#B9790E; --danger:#C0392B;
+  --display:'Barlow Condensed',sans-serif; --body:'Public Sans',sans-serif; --mono:'IBM Plex Mono',monospace;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1A2B; --surface:#152439; --surface-2:#1C3049; --ink:#E7ECF2; --muted:#93A4BA;
+    --line:#2A3E57; --accent:#FF7A45; --accent-ink:#1A0E08; --blue:#6E9FDC;
+    --ok:#4FBE82; --warn:#E3A73B; --danger:#E0564A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1A2B; --surface:#152439; --surface-2:#1C3049; --ink:#E7ECF2; --muted:#93A4BA;
+  --line:#2A3E57; --accent:#FF7A45; --accent-ink:#1A0E08; --blue:#6E9FDC;
+  --ok:#4FBE82; --warn:#E3A73B; --danger:#E0564A; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);margin:0;line-height:1.45}
+.wrap{max-width:980px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-left,0px)) 64px max(16px,env(safe-area-inset-right,0px))}
+header.app{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand .mark{font-family:var(--mono);font-size:12px;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:2px 6px;letter-spacing:.04em}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,5vw,40px);margin:0;text-wrap:balance;letter-spacing:.01em}
+.subtitle{color:var(--muted);font-size:15px;max-width:60ch}
+.byline{font-size:13px;color:var(--muted)}
+.byline a{color:var(--blue)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+.card h2{font-family:var(--display);font-weight:600;font-size:21px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.card h2 .tag{font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+.card p.desc{color:var(--muted);font-size:13.5px;margin:0 0 16px}
+label{display:block;font-size:12.5px;color:var(--muted);margin:10px 0 4px;font-weight:500}
+label:first-of-type{margin-top:0}
+input{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-family:var(--mono);font-size:14px;color:var(--ink)}
+input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result{margin-top:16px;padding:14px;background:var(--surface-2);border-radius:8px;border:1px dashed var(--line)}
+.result .big{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:22px;font-weight:600}
+.result .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.result .line{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-top:1px solid var(--line);font-size:13.5px}
+.result .line:first-of-type{border-top:none}
+.result .line b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+.flag{display:inline-block;font-size:11.5px;padding:2px 7px;border-radius:999px;margin:2px 4px 0 0}
+.flag.ok{background:color-mix(in srgb, var(--ok) 18%, transparent);color:var(--ok)}
+.flag.warn{background:color-mix(in srgb, var(--warn) 20%, transparent);color:var(--warn)}
+.flag.danger{background:color-mix(in srgb, var(--danger) 20%, transparent);color:var(--danger)}
+textarea{width:100%;min-height:90px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-family:var(--mono);font-size:13px;color:var(--ink);resize:vertical}
+footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 18px}
+footer a{color:var(--blue);text-decoration:none}
+footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app">
+    <div class="brand">
+      <span class="mark">01 / 04</span>
+      <div>
+        <h1>Calculs d'atelier</h1>
+        <div class="subtitle">Vitesse de broche, avance, rugosité théorique et TRS — formules d'usinage usuelles, calculées dans votre navigateur.</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Coupe <span class="tag">vitesse &amp; avance</span></h2>
+      <p class="desc">Fréquence de broche depuis la vitesse de coupe, puis avance et temps d'usinage.</p>
+      <div class="row2">
+        <div><label for="vc">Vitesse de coupe Vc (m/min)</label><input id="vc" type="number" value="100" step="any"></div>
+        <div><label for="d">Diamètre (mm)</label><input id="d" type="number" value="20" step="any"></div>
+      </div>
+      <div class="row2">
+        <div><label for="f">Avance f (mm/tr)</label><input id="f" type="number" value="0.1" step="any"></div>
+        <div><label for="lg">Longueur à usiner (mm)</label><input id="lg" type="number" value="50" step="any"></div>
+      </div>
+      <label for="rb">Rayon de bec (mm) — optionnel, pour le Ra théorique</label>
+      <input id="rb" type="number" value="0.4" step="any">
+      <div class="result" id="coupeResult"></div>
+      <p class="note">Le Ra théorique (f²/32r) est indicatif : l'état de surface réel dépend de l'outil, de la matière, des vibrations et de la lubrification — à valider par une mesure sur pièce.</p>
+    </div>
+
+    <div class="card">
+      <h2>TRS <span class="tag">OEE</span></h2>
+      <p class="desc">Taux de rendement synthétique d'un poste : disponibilité × performance × qualité.</p>
+      <div class="row2">
+        <div><label for="treq">Temps requis (min)</label><input id="treq" type="number" value="480" step="any"></div>
+        <div><label for="arrets">Arrêts (min)</label><input id="arrets" type="number" value="60" step="any"></div>
+      </div>
+      <div class="row2">
+        <div><label for="cycle">Cycle théorique (s/pièce)</label><input id="cycle" type="number" value="30" step="any"></div>
+        <div><label for="prod">Pièces produites</label><input id="prod" type="number" value="700" step="1"></div>
+      </div>
+      <label for="bonnes">Pièces bonnes</label>
+      <input id="bonnes" type="number" value="679" step="1">
+      <div class="result" id="trsResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Capabilité <span class="tag">Cp / Cpk</span></h2>
+      <p class="desc">Collez une série de mesures (une valeur par ligne ou séparées par des virgules) et vos limites de tolérance.</p>
+      <label for="mesures">Mesures</label>
+      <textarea id="mesures">10.004, 9.998, 10.011, 10.002, 9.995, 10.007, 10.000, 10.013, 9.992, 10.006, 10.001, 9.997, 10.009, 10.003, 9.999, 10.012, 10.005, 9.994, 10.008, 10.000, 10.010, 9.996, 10.004, 10.002, 9.998</textarea>
+      <div class="row2">
+        <div><label for="lsi">LSI (limite inf.)</label><input id="lsi" type="number" value="9.95" step="any"></div>
+        <div><label for="lss">LSS (limite sup.)</label><input id="lss" type="number" value="10.05" step="any"></div>
+      </div>
+      <div class="result" id="capaResult"></div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Mohamed-Ali El Amri — développeur freelance Python &amp; IA, Cluses (Haute-Savoie)</span>
+    <a href="https://github.com/momkdk/outils-atelier" target="_blank" rel="noopener">Code source (MIT)</a>
+    <a href="https://github.com/momkdk" target="_blank" rel="noopener">Tous les outils</a>
+  </footer>
+</div>
+
+<script>
+function el(id){return document.getElementById(id)}
+function num(id){const v=parseFloat(el(id).value);return Number.isFinite(v)?v:NaN}
+
+function majCoupe(){
+  const vc=num('vc'), d=num('d'), f=num('f'), lg=num('lg'), rb=num('rb');
+  const out=el('coupeResult');
+  if(!(vc>0 && d>0)){out.innerHTML='<span class="flag warn">Renseignez Vc et le diamètre (valeurs positives)</span>';return}
+  const n=1000*vc/(Math.PI*d);
+  let html=`<div class="line"><span>Fréquence de broche N</span><b>${n.toFixed(0)} tr/min</b></div>`;
+  if(f>0){
+    const vf=n*f;
+    html+=`<div class="line"><span>Vitesse d'avance Vf</span><b>${vf.toFixed(0)} mm/min</b></div>`;
+    if(lg>0){
+      const t=60*lg/vf;
+      html+=`<div class="line"><span>Temps d'usinage</span><b>${t.toFixed(1)} s</b></div>`;
+    }
+  }
+  if(f>0 && rb>0){
+    const ra=(f*f)/(32*rb)*1000;
+    html+=`<div class="line"><span>Ra théorique</span><b>${ra.toFixed(2)} µm</b></div>`;
+  }
+  out.innerHTML=html;
+}
+
+function majTRS(){
+  const treq=num('treq'), arrets=num('arrets'), cycle=num('cycle'), prod=num('prod'), bonnes=num('bonnes');
+  const out=el('trsResult');
+  if(!(treq>0) || !(arrets>=0 && arrets<treq) || !(cycle>0) || !(prod>=0) || !(bonnes>=0 && bonnes<=prod)){
+    out.innerHTML='<span class="flag warn">Vérifiez les valeurs (arrêts &lt; temps requis, bonnes ≤ produites)</span>';return;
+  }
+  const marche=treq-arrets;
+  const dispo=marche/treq;
+  const perf=Math.min(1,(cycle*prod/60)/marche);
+  const qual= prod? bonnes/prod : 0;
+  const trs=dispo*perf*qual;
+  const pct=x=>(x*100).toFixed(1)+' %';
+  let flagClass= trs>=0.85?'ok': trs>=0.6?'warn':'danger';
+  out.innerHTML=`
+    <div class="line"><span>Disponibilité</span><b>${pct(dispo)}</b></div>
+    <div class="line"><span>Performance</span><b>${pct(perf)}</b></div>
+    <div class="line"><span>Qualité</span><b>${pct(qual)}</b></div>
+    <div class="line"><span><strong>TRS</strong></span><b>${pct(trs)}</b></div>
+    <span class="flag ${flagClass}">${trs>=0.85?'Niveau de référence':trs>=0.6?'Marge de progression':'À investiguer'}</span>`;
+}
+
+function ecartType(valeurs){
+  const n=valeurs.length;
+  const m=valeurs.reduce((a,b)=>a+b,0)/n;
+  const variance=valeurs.reduce((a,b)=>a+(b-m)**2,0)/(n-1);
+  return {moyenne:m, sigma:Math.sqrt(variance)};
+}
+
+function majCapa(){
+  const texte=el('mesures').value.trim();
+  const lsi=num('lsi'), lss=num('lss');
+  const out=el('capaResult');
+  if(!texte){out.innerHTML='<span class="flag warn">Collez une série de mesures</span>';return}
+  const valeurs=texte.split(/[\s,;]+/).map(Number).filter(Number.isFinite);
+  if(valeurs.length<2){out.innerHTML='<span class="flag warn">Il faut au moins 2 mesures valides</span>';return}
+  if(!(lss>lsi)){out.innerHTML='<span class="flag warn">LSS doit être supérieure à LSI</span>';return}
+  const {moyenne,sigma}=ecartType(valeurs);
+  if(sigma===0){out.innerHTML='<span class="flag warn">Écart-type nul : toutes les mesures sont identiques</span>';return}
+  const cp=(lss-lsi)/(6*sigma);
+  const cpk=Math.min((lss-moyenne)/(3*sigma),(moyenne-lsi)/(3*sigma));
+  const horsTol=valeurs.filter(v=>v<lsi||v>lss).length;
+  let flags='';
+  if(valeurs.length<25) flags+='<span class="flag warn">Moins de 25 mesures : indices peu fiables</span>';
+  if(horsTol) flags+=`<span class="flag danger">${horsTol} mesure(s) hors tolérance</span>`;
+  if(cpk<1) flags+='<span class="flag danger">Cpk &lt; 1,00 : procédé non capable</span>';
+  else if(cpk<1.33) flags+='<span class="flag warn">Cpk entre 1,00 et 1,33 : capabilité limite</span>';
+  else flags+='<span class="flag ok">Cpk ≥ 1,33</span>';
+  out.innerHTML=`
+    <div class="line"><span>n</span><b>${valeurs.length}</b></div>
+    <div class="line"><span>Moyenne</span><b>${moyenne.toFixed(4)}</b></div>
+    <div class="line"><span>Écart-type</span><b>${sigma.toFixed(4)}</b></div>
+    <div class="line"><span>Cp</span><b>${cp.toFixed(2)}</b></div>
+    <div class="line"><span>Cpk</span><b>${cpk.toFixed(2)}</b></div>
+    <div style="margin-top:8px">${flags}</div>`;
+}
+
+['vc','d','f','lg','rb'].forEach(id=>el(id).addEventListener('input',majCoupe));
+['treq','arrets','cycle','prod','bonnes'].forEach(id=>el(id).addEventListener('input',majTRS));
+['mesures','lsi','lss'].forEach(id=>el(id).addEventListener('input',majCapa));
+majCoupe();majTRS();majCapa();
+</script>
+</body>
+</html>
